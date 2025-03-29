@@ -1,0 +1,8 @@
+fastapi
+asyncio
+python-dotenv
+pydantic
+requests
+redis
+mysql
+uvicorn
