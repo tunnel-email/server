@@ -30,7 +30,7 @@ _logger = logging.getLogger(__name__)
 
 load_dotenv()
 
-app = FastAPI()
+app = FastAPI(docs_url=None, redoc_url=None)
 
 yandex_sso = YandexSSO(
     client_id=getenv("YANDEX_CLIENT_ID"),
