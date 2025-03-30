@@ -4,5 +4,6 @@ mailtunnel/database/__pycache__
 mailtunnel/forwarder/__pycache__
 mailtunnel/snitun/__pycache__
 mailtunnel/snitun/server/__pycache__
-mailtunnel/rathole/config.toml
+mailtunnel/rathole/*
+!mailtunnel/rathole/.gitkeep
 .env

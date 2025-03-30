@@ -5,6 +5,11 @@
 ```bash
 pip install -r requirements.txt
 ```
+2. Установить rathole (убедитесь, что установлены wget и unzip)
+```bash
+chmod +x setup_rathole.sh
+./setup_rathole.sh
+```
 2. Установить базы данных MySQL, Redis
 3. Создать БД mysql через код в `db_create.sql`. Заменить `strong_password` на надёжный пароль 
 4. Получить `client_id`, `client_secret` для Yandex OAuth
@@ -70,7 +75,7 @@ python -m mailtunnel.http_api
 1. Установите nginx
 2. Получите TLS сертификат:
 ```bash
-sudo certbot certonly --standalone -d <your-domain> -d www.<your-domain>
+sudo certbot --nginx -d <your-domain> -d www.<your-domain>
 ```
 3. Поместите конфигурацию из `nginx-conf/tunnel.email` в `/etc/nginx/sites-available/`
 4. Замените tunnel.email на ваш домен в конфигурации
