@@ -1,6 +1,8 @@
 from fastapi import FastAPI, Depends, HTTPException, Response
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi_sso.sso.yandex import YandexSSO
+from fastapi.responses import FileResponse
+from fastapi.staticfiles import StaticFiles
 
 from starlette.requests import Request
 from starlette.status import *
@@ -20,6 +22,7 @@ import asyncio
 
 from dotenv import load_dotenv
 from os import getenv
+import os
 
 
 _logger = logging.getLogger(__name__)
@@ -37,6 +40,17 @@ yandex_sso = YandexSSO(
 )
 
 states = {}
+
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+STATIC_DIR = os.path.join(BASE_DIR, "static")
+
+app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+
+@app.get("/")
+async def main_page():
+    index_path = os.path.join(STATIC_DIR, "index.html")
+
+    return FileResponse(index_path)
 
 
 @app.get("/auth/yandex/login")
@@ -105,6 +119,8 @@ async def create_tunnel(token: Token):
     with RoutingDB() as r_db:
         r_db.set_tunnel(token.token, subdomain, tunnel_id)
 
+
+    # TODO: adding dns records
     # Adding MX DNS record
     # mx_result = add_mx(subdomain)
 
@@ -198,4 +214,4 @@ async def tunnel_status(tunnel_id: str):
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=80)
+    uvicorn.run(app, host="127.0.0.1", port=8000)

@@ -11,6 +11,8 @@ load_dotenv()
 
 _logger = logging.getLogger(__name__)
 
+"""Wrapper for reg.ru API for creating DNS records"""
+
 ENDPOINT = "https://api.reg.ru/api/regru2/zone"
 
 def generic_request(operation, additional_data):
@@ -32,7 +34,7 @@ def generic_request(operation, additional_data):
     if req_json["answer"]["domains"][0]["result"] == "success":
         return True
     else:
-        _logger.error(f"Unable to create perform /{operation}: {req_json}")
+        _logger.error(f"Unable to perform /{operation}: {req_json}")
         return False
 
 
