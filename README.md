@@ -1,14 +1,13 @@
 # readme
 
 ## Настройка
-1. Установить зависимости
+1. Установить пакет
 ```bash
-pip install -r requirements.txt
+pip install .
 ```
 2. Установить rathole (убедитесь, что установлены wget и unzip)
 ```bash
-chmod +x setup_rathole.sh
-./setup_rathole.sh
+sudo ./setup_rathole.sh
 ```
 2. Установить базы данных MySQL, Redis
 3. Создать БД mysql через код в `db_create.sql`. Заменить `strong_password` на надёжный пароль 
@@ -32,7 +31,7 @@ RATHOLE_CONFIG_UPDATE= # on main instance: 5
 
 YANDEX_CLIENT_ID=
 YANDEX_CLIENT_SECRET=
-YANDEX_REDIRECT_URI=
+YANDEX_REDIRECT_URI= # https://<your-domain>/auth/yandex/callback
 
 REGRU_USERNAME= # not necessary for now
 REGRU_PASSWORD= # not necessary for now
@@ -46,28 +45,34 @@ HTTP01_URL_TTL= # on main instance: 90 = 1.5 min
 6. Выдайте Python права на работу с root-портов без root:
 ```bash
 sudo setcap 'cap_net_bind_service=+ep' $(readlink -f $(which python3))
-``` 
+```
+7. Убедитесь, что присутствует A запись в DNS на поддомен * 
 
 ## Запуск
 Сервер состоит из 4 основных компонентов:
 * `rathole` - менеджер туннелей
-* `config_dumper` - дампер текущих туннелей в конфиг rathole
-* `sni_forwarder` - маршрутизатор электронных писем на основе SNI
-* `http_api` - API для работы с сервисом
+* `mailtunnel-confdumper` - дампер текущих туннелей в конфиг rathole
+* `mailtunnel-forwarder` - маршрутизатор электронных писем на основе SNI
+* `mailtunnel-api` - API для работы с сервисом
 
+### Самый простой способ запуска
 Запустите в нескольких сессиях:
 ```bash
-./rathole config.toml
+rathole /etc/rathole/mailtunnel-config
 ```
 ```bash
-python -m mailtunnel.config_dumper
+mailtunnel-confdumper
 ```
 ```bash
-python -m mailtunnel.sni_forwarder
+mailtunnel-forwarder
 ```
 ```bash
-python -m mailtunnel.http_api
+mailtunnel-api
 ```
+
+### Рекомендуемый способ запуска
+Рекомендуется создать для каждого компонента systemd сервис.
+Подробная инструкция находится <a href="systemd/README.md">здесь</a>
 
 > NOTE: предварительно убедитесь, что запущены БД MySQL и Redis
 

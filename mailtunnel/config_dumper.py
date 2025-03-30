@@ -2,12 +2,13 @@ from mailtunnel.database.rathole_config_db import *
 from time import sleep
 from dotenv import load_dotenv
 from os import getenv
-from os.path import dirname
 import logging
 
 
 _logger = logging.getLogger(__name__)
 _logger.setLevel(logging.INFO)
+
+RATHOLE_CONFIG = "/etc/rathole/mailtunnel-config.toml"
 
 def main():
     _logger.info("Started...")
@@ -19,10 +20,8 @@ def main():
                 continue
 
             _logger.info("Config updated")
-            
-            path_to_conf = dirname(__file__) + "/rathole/config.toml"
 
-            with open(path_to_conf, "w") as conf:
+            with open(RATHOLE_CONFIG, "w") as conf:
                 pre = """[server]
 bind_addr = \"0.0.0.0:6789\"
 

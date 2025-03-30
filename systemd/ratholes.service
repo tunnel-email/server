@@ -1,0 +1,14 @@
+[Unit]
+Description=Rathole Server Service For Mailtunnel
+After=network.target
+
+[Service]
+Type=simple
+Restart=on-failure
+RestartSec=5s
+LimitNOFILE=1048576
+
+ExecStart=/usr/bin/rathole -s /etc/rathole/mailtunnel-config.toml
+
+[Install]
+WantedBy=multi-user.target

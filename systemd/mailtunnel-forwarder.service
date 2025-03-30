@@ -1,0 +1,15 @@
+[Unit]
+Description=Mailtunnel Mail Forwarder
+After=network.target
+
+[Service]
+Type=simple
+User=basic # Replace with appropriate user
+Group=basic # Replace with appropriate group
+ExecStart=/home/basic/.local/bin/mailtunnel-forwarder # To find path exec: which mailtunnel-forwarder
+Restart=on-failure
+RestartSec=5s
+WorkingDirectory=/home/basic/mailtunnel-server/ # git repo path
+
+[Install]
+WantedBy=multi-user.target

@@ -5,5 +5,7 @@ mailtunnel/forwarder/__pycache__
 mailtunnel/snitun/__pycache__
 mailtunnel/snitun/server/__pycache__
 mailtunnel/rathole/*
+mailtunnel.egg-info
+build/
 !mailtunnel/rathole/.gitkeep
 .env
