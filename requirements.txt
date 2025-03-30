@@ -6,3 +6,7 @@ requests
 redis
 mysql
 uvicorn
+fastapi-sso
+mysql-connector-python
+mysql-connector-python-rf
+portpicker

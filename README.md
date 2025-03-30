@@ -6,7 +6,7 @@
 pip install -r requirements.txt
 ```
 2. Установить базы данных MySQL, Redis
-3. Создать БД mysql через код в `db_create.sql`. Заменить `strong_password` на надёжный пароль
+3. Создать БД mysql через код в `db_create.sql`. Заменить `strong_password` на надёжный пароль 
 4. Получить `client_id`, `client_secret` для Yandex OAuth
 5. Создать .`env` в соответсвии с данным шаблоном:
 
@@ -38,6 +38,10 @@ TUNNEL_ID_LENGTH= # on main instance: 25
 TUNNEL_TTL= # on main instance: 900 = 15 min
 HTTP01_URL_TTL= # on main instance: 90 = 1.5 min
 ```
+6. Выдайте Python права на работу с root-портов без root:
+```bash
+sudo setcap 'cap_net_bind_service=+ep' $(readlink -f $(which python3))
+``` 
 
 ## Запуск
 Сервер состоит из 4 основных компонентов:
@@ -70,4 +74,5 @@ sudo certbot certonly --standalone -d <your-domain> -d www.<your-domain>
 ```
 3. Поместите конфигурацию из `nginx-conf/tunnel.email` в `/etc/nginx/sites-available/`
 4. Замените tunnel.email на ваш домен в конфигурации
+5. Удалите `/etc/nginx/sites-enabled/default`
 5. Создайте ссылку на конфигурацию в `/etc/nginx/sites-enabled/`

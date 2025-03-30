@@ -148,7 +148,7 @@ async def create_tunnel(token: Token):
 
     _logger.info(f"Tunnel was created by {user_id}")
 
-    return {"subdomain": f"{subdomain}.aist.site", "tunnel_id": tunnel_id, "tunnel_secret": tunnel_secret}
+    return {"subdomain": f"{subdomain}.{getenv('DOMAIN')}", "tunnel_id": tunnel_id, "tunnel_secret": tunnel_secret}
 
 
 @app.post("/delete_tunnel")
