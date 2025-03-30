@@ -47,11 +47,15 @@ STATIC_DIR = os.path.join(BASE_DIR, "static")
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 @app.get("/")
+@app.get("index.html")
 async def main_page():
     index_path = os.path.join(STATIC_DIR, "index.html")
 
     return FileResponse(index_path)
 
+@app.get("/about.html")
+async def about_page():
+    about_path = os.path.join(STATIC_DIR, "about.html")
 
 @app.get("/auth/yandex/login")
 async def yandex_login(token: str):
