@@ -4,12 +4,16 @@ After=network.target
 
 [Service]
 Type=simple
-User=basic # Replace with appropriate user
-Group=basic # Replace with appropriate group
-ExecStart=/home/basic/.local/bin/mailtunnel-confdumper # To find path exec: which mailtunnel-confdumper
+# Replace with appropriate user
+User=basic
+# Replace with appropriate group
+Group=basic
+# To find path, exec: which mailtunnel-confdumper
+ExecStart=/home/basic/.local/bin/mailtunnel-confdumper
 Restart=on-failure
 RestartSec=5s
-WorkingDirectory=/home/basic/mailtunnel-server/ # git repo path
+# git repo path
+WorkingDirectory=/home/basic/mailtunnel-server/
 
 [Install]
 WantedBy=multi-user.target
