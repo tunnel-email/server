@@ -3,7 +3,7 @@
 ## Настройка
 1. Установить пакет
 ```bash
-pip install .
+pip install -e .
 ```
 2. Установить rathole (убедитесь, что установлены wget и unzip)
 ```bash
@@ -12,7 +12,7 @@ sudo ./setup_rathole.sh
 2. Установить базы данных MySQL, Redis
 3. Создать БД mysql через код в `db_create.sql`. Заменить `strong_password` на надёжный пароль 
 4. Получить `client_id`, `client_secret` для Yandex OAuth
-5. Создать .`env` в соответсвии с данным шаблоном:
+5. Создать `.env` в соответсвии с данным шаблоном:
 
 ```bash
 DOMAIN= # your domain name

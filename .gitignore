@@ -6,4 +6,8 @@ mailtunnel/snitun/__pycache__
 mailtunnel/snitun/server/__pycache__
 mailtunnel.egg-info
 build/
+documents/*
+!documents/.gitkeep
+downloads/*
+!downloads/.gitkeep
 .env

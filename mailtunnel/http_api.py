@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, Response
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi_sso.sso.yandex import YandexSSO
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 
 from starlette.requests import Request
@@ -42,9 +42,15 @@ yandex_sso = YandexSSO(
 states = {}
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
+
 STATIC_DIR = os.path.join(BASE_DIR, "static")
+DOCUMENTS_DIR = os.path.join(BASE_DIR, "documents")
+DOWNLOADS_DIR = os.path.join(BASE_DIR, "downloads")
 
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
+app.mount("/documents", StaticFiles(directory=DOCUMENTS_DIR), name="documents")
+app.mount("/downloads", StaticFiles(directory=DOWNLOADS_DIR), name="downloads")
+
 
 @app.get("/")
 @app.get("/index.html")
@@ -59,6 +65,14 @@ async def about_page():
     about_path = os.path.join(STATIC_DIR, "about.html")
 
     return FileResponse(about_path)
+
+@app.get("/terms.html")
+async def terms_doc():
+    return RedirectResponse("/documents/terms.pdf")
+
+@app.get("/privacy.html")
+async def terms_doc():
+    return RedirectResponse("/documents/privacy.pdf")
 
 @app.get("/auth/yandex/login")
 async def yandex_login(token: str):
@@ -226,6 +240,4 @@ def main():
 
 
 if __name__ == "__main__":
-    import uvicorn
-
-    uvicorn.run(app, host="127.0.0.1", port=8000)
+    main()
