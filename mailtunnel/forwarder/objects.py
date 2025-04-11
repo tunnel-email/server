@@ -181,7 +181,7 @@ class SMTPServer:
 
             _logger.debug(f"Received message: {message}, len: {len(message)} from {addr}")
 
-            if message.startswith("HELO"): # TODO: EHLO support
+            if message.startswith("HELO"):
                 await self.send_response(writer, "250 Hello")
             elif message.startswith("EHLO"):
                 await self.send_response(writer, "250-Hello\r\n250 STARTTLS")
@@ -189,6 +189,9 @@ class SMTPServer:
                 await self.send_response(writer, "220 Ready to start TLS")
 
                 await self.sni_proxy.tunnel(reader, writer)
+
+                _logger.debug(f"Stopped answering SMTP from {addr}")
+                return
             elif message == "QUIT":
                 await self.send_response(writer, "221 Bye")
                 break
