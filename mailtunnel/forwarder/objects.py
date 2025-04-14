@@ -73,7 +73,6 @@ class SMTPProxy:
 
     async def send_to_endpoint(self, data):
         try:
-            _logger.debug(f"Can write to remote_writer: {self.remote_writer.can_write()}")
             _logger.debug(f"Remote_writer before: {self.remote_writer!r}")
 
             self.remote_writer.write(data)
