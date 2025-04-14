@@ -17,10 +17,9 @@ class SMTPProxy:
         self.remote_reader = None
         self.remote_writer = None
 
-    async def send_cmd(self, writer, cmd):
-        writer.write(f"{cmd}\r\n".encode("utf-8"))
-
-        await writer.drain()
+    async def send_cmd(self, cmd):
+        await self.send_to_endpoint(f"{cmd}\r\n".encode("utf-8"))
+        _logger.debug(f"Cmd sent successfuly")
 
 
     async def get_response(self, reader):
@@ -65,7 +64,7 @@ class SMTPProxy:
 
         # No HELO. STARTTLS first
 
-        await self.send_cmd(self.remote_writer, "STARTTLS")
+        await self.send_cmd("STARTTLS")
 
         resp_starttls = await self.get_response(self.remote_reader)
 
@@ -74,7 +73,12 @@ class SMTPProxy:
 
     async def send_to_endpoint(self, data):
         try:
+            _logger.debug(f"Can write to remote_writer: {self.remote_writer.can_write()}")
+            _logger.debug(f"Remote_writer before: {self.remote_writer!r}")
+
             self.remote_writer.write(data)
+
+            _logger.debug(f"Remote_writer after: {self.remote_writer!r}")
 
             await asyncio.wait_for(self.remote_writer.drain(), timeout=10.0) # timeout 
         except (ConnectionResetError, ConnectionError, asyncio.TimeoutError) as e:
