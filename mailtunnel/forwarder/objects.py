@@ -14,6 +14,8 @@ class SMTPProxy:
         self.dest_host = dest_host
         self.dest_port = dest_port
 
+        self.remote_reader = None
+        self.remote_writer = None
 
     async def send_cmd(self, writer, cmd):
         writer.write(f"{cmd}\r\n".encode("utf-8"))
@@ -24,51 +26,65 @@ class SMTPProxy:
     async def get_response(self, reader):
         response = []
 
-        while True:
-            resp = await reader.readline()
-            resp = resp.decode().strip()
+        try:
+            while not reader.at_eof():
+                try:
+                    resp = await asyncio.wait_for(reader.readline(), timeout=5.0)
+                    resp_str = resp.decode().strip()
 
-            if not resp:
-                break
+                    if not resp_str:
+                        break
 
-            response.append(resp)
+                    response.append(resp_str)
 
-            if resp[3] == " ": # 220-... - continue; 220 ... - break
-                break
+                    # 220-... - continue; 220 ... - break
+                    if resp_str and len(resp_str) > 3 and resp_str[3] == " ": 
+                        break
+                except asyncio.TimeoutError:
+                    _logger.warning(f"Timeout in get_response {self.dest_host}:{self.dest_port}")
+                    break
+        except (ConnectionResetError, ConnectionError) as e:
+            _logger.warning(f"Connection problem in get_response: {e}")
 
         return response
 
 
     async def connect(self):
-        self.remote_reader, self.remote_writer = await asyncio.open_connection(self.dest_host, self.dest_port)
+        _logger.debug(f"Trying to establish connection with {self.dest_host}:{self.dest_port}")
+        self.remote_reader, self.remote_writer = await asyncio.open_connection(
+            self.dest_host, self.dest_port
+        )
         _logger.debug(f"Established proxy connection with {self.dest_host}:{self.dest_port}")
         
         # INIT SMTP connection
         init_line = await self.get_response(self.remote_reader)
-
         _logger.debug(f"Proxy endpoint {self.dest_host}:{self.dest_port} initial msg: {init_line}")
 
-        await self.send_cmd(self.remote_writer, "HELO smtpproxy")
-        
-        resp1 = await self.get_response(self.remote_reader)
+        if not init_line:
+            raise ConnectionError(f"No initial response from {self.dest_host}:{self.dest_port}")
 
-        _logger.debug(f"Proxy endpoint {self.dest_host}:{self.dest_port} asnwer on HELO: {resp1}")
+        # No HELO. STARTTLS first
 
         await self.send_cmd(self.remote_writer, "STARTTLS")
 
-        resp2 = await self.get_response(self.remote_reader)
+        resp_starttls = await self.get_response(self.remote_reader)
 
-        _logger.debug(f"Proxy endpoint {self.dest_host}:{self.dest_port} asnwer on STARTTLS: {resp2}")
+        _logger.debug(f"Proxy endpoint {self.dest_host}:{self.dest_port} answer on STARTTLS: {resp_starttls}")
 
 
     async def send_to_endpoint(self, data):
-        self.remote_writer.write(data)
+        try:
+            self.remote_writer.write(data)
 
-        await self.remote_writer.drain()
+            await asyncio.wait_for(self.remote_writer.drain(), timeout=10.0) # timeout 
+        except (ConnectionResetError, ConnectionError, asyncio.TimeoutError) as e:
+            _logger.warning(f"Error in send_to_endpoint {self.dest_host}:{self.dest_port}: {e}")
+
+            raise # re-raise
 
 
     async def forward_traffic(self, reader, writer):
-        # Forward data between two reader/writer pairs (client <-> remote).
+        # forward data between two reader/writer pairs
 
         async def _pump(reader, writer):
             try:
@@ -83,7 +99,7 @@ class SMTPProxy:
             finally:
                 writer.close()
         
-        # Run bidirectional copy until one side closes
+        # bidirectional copy until one side closes
         task1 = asyncio.create_task(_pump(reader, self.remote_writer))
         task2 = asyncio.create_task(_pump(self.remote_reader, writer))
 

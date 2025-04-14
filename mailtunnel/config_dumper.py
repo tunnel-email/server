@@ -12,6 +12,7 @@ RATHOLE_CONFIG = "/etc/rathole/mailtunnel-config.toml"
 
 def main():
     _logger.info("Started...")
+
     with RatholeDB() as r_db:
         prev_version = r_db.get_version()
 
@@ -31,6 +32,8 @@ token = \"5432\"
 
 """
                 conf.write(pre + r_db.get_dump())
+
+            prev_version = r_db.get_version()
 
             sleep(int(getenv("RATHOLE_CONFIG_UPDATE")))
 
