@@ -17,13 +17,11 @@ def main():
         prev_version = r_db.get_version()
 
         while True:
-            if r_db.get_version() == prev_version:
-                continue
+            if r_db.get_version() != prev_version:
+                _logger.info("Config updated")
 
-            _logger.info("Config updated")
-
-            with open(RATHOLE_CONFIG, "w") as conf:
-                pre = """[server]
+                with open(RATHOLE_CONFIG, "w") as conf:
+                    pre = """[server]
 bind_addr = \"0.0.0.0:6789\"
 
 [server.services.test]
@@ -31,9 +29,9 @@ bind_addr = \"127.0.0.0:5432\"
 token = \"5432\"
 
 """
-                conf.write(pre + r_db.get_dump())
+                    conf.write(pre + r_db.get_dump())
 
-            prev_version = r_db.get_version()
+                prev_version = r_db.get_version()
 
             sleep(int(getenv("RATHOLE_CONFIG_UPDATE")))
 

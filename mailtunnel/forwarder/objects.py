@@ -62,7 +62,7 @@ class SMTPProxy:
         if not init_line:
             raise ConnectionError(f"No initial response from {self.dest_host}:{self.dest_port}")
 
-        # No HELO. STARTTLS first
+        # No HELO/EHLO. STARTTLS first
 
         await self.send_cmd("STARTTLS")
 
