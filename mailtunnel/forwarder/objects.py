@@ -47,56 +47,63 @@ class SMTPProxy:
 
         return response
 
+    async def close_connection(self):
+        if self.remote_writer:
+            _logger.debug(f"Closing connection with {self.dest_host}:{self.dest_port}")
 
-    async def connect(self, max_attempts = 3):
+            try:
+                self.remote_writer.close()
+                await self.remote_writer.wait_closed()
+            except Exception as e:
+                _logger.error(f"Error while closing connection: {e}")
+            finally:
+                self.remote_writer = None
+                self.remote_reader = None
+
+
+    async def connect(self, max_attempts=3):
         attempts = 0
 
         while attempts < max_attempts:
             attempts += 1
+
+            await self.close_connection()
 
             try:
                 _logger.debug(f"[Attempt {attempts}] connecting to {self.dest_host}:{self.dest_port}...")
                 self.remote_reader, self.remote_writer = await asyncio.open_connection(
                     self.dest_host, self.dest_port
                 )
-
                 _logger.debug(f"Connection established with {self.dest_host}:{self.dest_port}")
 
+        
                 init_line = await self.get_response(self.remote_reader)
-
                 _logger.debug(f"Initial message: {init_line}")
-
                 if not init_line:
                     raise ConnectionError("No initial greeting from endpoint.")
 
-                # No HELO/EHLO. STARTTLS first
 
                 await self.send_cmd("STARTTLS")
                 _logger.debug("STARTTLS command sent, waiting for response...")
 
-                resp_starttls = await asyncio.wait_for(self.get_response(self.remote_reader), timeout=5.0)
+                resp_starttls = await asyncio.wait_for(self.get_response(self.remote_reader), timeout=10.0)
                 _logger.debug(f"STARTTLS response: {resp_starttls}")
 
                 if not resp_starttls or not any(line.startswith("220") or "Ready" in line for line in resp_starttls):
                     raise asyncio.TimeoutError("STARTTLS response not received properly.")
 
-                _logger.info("STARTTLS command acknowledged")
-                return 
+                _logger.info("STARTTLS command acknowledged.")
+                return
 
             except (asyncio.TimeoutError, ConnectionError) as e:
-                _logger.warning(f"[Attempt {attempts}] error during connection: {e}. Reconnecting...")
-
-                if self.remote_writer is not None:
-                    self.remote_writer.close()
-
-                    try:
-                        await self.remote_writer.wait_closed()
-                    except Exception:
-                        pass
+                _logger.warning(f"[Attempt {attempts}] Error during connection: {type(e).__name__}: {e}. Reconnecting...")
 
                 await asyncio.sleep(1)
 
-        raise ConnectionError(f"Unable to connect to {self.dest_host}:{self.dest_port} after {max_attempts} attempts.")
+
+        _logger.error(f"Unable to establish connection with {self.dest_host}:{self.dest_port} after {max_attempts} attempts.")
+
+        raise ConnectionError(f"Failed to connect to {self.dest_host}:{self.dest_port} after {max_attempts} attempts")
 
 
     async def send_to_endpoint(self, data):
