@@ -49,13 +49,25 @@ class SMTPProxy:
 
     async def close_connection(self):
         if self.remote_writer:
-            _logger.debug(f"Closing connection with {self.dest_host}:{self.dest_port}")
+            _logger.debug(f"Forcefully closing connection with {self.dest_host}:{self.dest_port}")
 
             try:
+                sock = self.remote_writer.get_extra_info('socket')
+                
+                # sending eof
+                self.remote_writer.write_eof()
+                await asyncio.wait_for(self.remote_writer.drain(), timeout=1.0)
+                
                 self.remote_writer.close()
                 await self.remote_writer.wait_closed()
+                
+                # closing socket on low-level
+                if sock and sock.fileno() != -1:
+                    sock.shutdown(2)  # SHUT_RDWR
+                    sock.close()
+                    
             except Exception as e:
-                _logger.error(f"Error while closing connection: {e}")
+                _logger.error(f"Error during connection close: {e}")
             finally:
                 self.remote_writer = None
                 self.remote_reader = None
