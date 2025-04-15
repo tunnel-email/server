@@ -28,7 +28,7 @@ class SMTPProxy:
         try:
             while not reader.at_eof():
                 try:
-                    resp = await asyncio.wait_for(reader.readline(), timeout=5.0)
+                    resp = await asyncio.wait_for(reader.readline(), timeout=16.0)
                     resp_str = resp.decode().strip()
 
                     if not resp_str:
