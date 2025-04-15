@@ -48,6 +48,37 @@ class SMTPProxy:
         return response
 
 
+    async def try_starttls(self, max_attempts=3):
+        # apparently, sometimes there are delivery issues with rathole tunnels
+        # that's why we need to try sending starttls multiple times
+
+        for attempt in range(1, max_attempts + 1):
+            _logger.debug(f"Sending STARTTLS, attempt {attempt}/{max_attempts}")
+
+            await self.send_cmd("STARTTLS")
+
+            try:
+                # waiting for starttls
+                resp_starttls = await asyncio.wait_for(self.get_response(self.remote_reader), timeout=8.0)
+            except asyncio.TimeoutError:
+                _logger.warning(f"Timeout for STARTTLS response on attempt {attempt}")
+
+                resp_starttls = None
+
+            _logger.debug(f"STARTTLS response attempt {attempt}: {resp_starttls}")
+
+            if resp_starttls and any(line.startswith("220") or "Ready" in line for line in resp_starttls):
+                _logger.info(f"STARTTLS acknowledged on attempt {attempt}: {resp_starttls}")
+                return True
+            else:
+                _logger.warning(f"Unexpected or empty response for STARTTLS on attempt {attempt}: {resp_starttls}")
+                await asyncio.sleep(1)
+
+        _logger.error(f"Max attempts ({max_attempts}) reached: STARTTLS on {self.dest_host}:{self.dest_port}")
+
+        return False
+
+
     async def connect(self):
         _logger.debug(f"Trying to establish connection with {self.dest_host}:{self.dest_port}")
         self.remote_reader, self.remote_writer = await asyncio.open_connection(
@@ -64,12 +95,12 @@ class SMTPProxy:
 
         # No HELO/EHLO. STARTTLS first
 
-        await self.send_cmd("STARTTLS")
+        tls_ok = await self.try_starttls()
 
-        resp_starttls = await self.get_response(self.remote_reader)
+        if not tls_ok:
+            _logger.warning(f"{self.dest_host}:{self.dest_port} didn't answer STARTTLS")
 
-        _logger.debug(f"Proxy endpoint {self.dest_host}:{self.dest_port} answer on STARTTLS: {resp_starttls}")
-
+            raise ConnectionError(f"{self.dest_host}:{self.dest_port} didn't answer STARTTLS")
 
     async def send_to_endpoint(self, data):
         try:
@@ -142,7 +173,10 @@ class SNIProxy:
             proxy = SMTPProxy("127.0.0.1", tunnel_port)
 
             _logger.debug(f"Trying to connect {tunnel_port}...")
-            await proxy.connect()
+            try:
+                await proxy.connect()
+            except ConnectionError:
+                return
             await proxy.send_to_endpoint(client_hello)
 
             await proxy.forward_traffic(reader, writer)
