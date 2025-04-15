@@ -79,7 +79,14 @@ class SMTPProxy:
         while attempts < max_attempts:
             attempts += 1
 
-            await self.close_connection()
+            # await self.close_connection()
+            if self.remote_writer:
+                try:
+                    self.remote_writer.close()
+                except:
+                    pass
+                self.remote_writer = None
+                self.remote_reader = None
 
             try:
                 _logger.debug(f"[Attempt {attempts}] connecting to {self.dest_host}:{self.dest_port}...")
