@@ -79,14 +79,7 @@ class SMTPProxy:
         while attempts < max_attempts:
             attempts += 1
 
-            # await self.close_connection()
-            if self.remote_writer:
-                try:
-                    self.remote_writer.close()
-                except:
-                    pass
-                self.remote_writer = None
-                self.remote_reader = None
+            await self.close_connection()
 
             try:
                 _logger.debug(f"[Attempt {attempts}] connecting to {self.dest_host}:{self.dest_port}...")
@@ -105,7 +98,7 @@ class SMTPProxy:
                 await self.send_cmd("STARTTLS")
                 _logger.debug("STARTTLS command sent, waiting for response...")
 
-                resp_starttls = await asyncio.wait_for(self.get_response(self.remote_reader), timeout=10.0)
+                resp_starttls = await asyncio.wait_for(self.get_response(self.remote_reader), timeout=16.0)
                 _logger.debug(f"STARTTLS response: {resp_starttls}")
 
                 if not resp_starttls or not any(line.startswith("220") or "Ready" in line for line in resp_starttls):
