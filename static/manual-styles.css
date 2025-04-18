@@ -1,0 +1,145 @@
+/* Стили для руководства пользователя */
+
+/* Заголовки разделов */
+.manual-content h2 {
+    font-size: 22px;
+    border-bottom: 1px solid #333333;
+    padding-bottom: 10px;
+    margin-bottom: 25px;
+    margin-top: 40px;
+    color: #2196f3;
+}
+
+/* Содержимое руководства */
+.manual-content {
+    background-color: #1e1e1e;
+    padding: 25px;
+    border-radius: 5px;
+    border: 1px solid #333333;
+}
+
+
+.toc {
+    background-color: #1a1a1a;
+    border: 1px solid #333;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 30px;
+}
+
+.toc h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: #2196f3;
+}
+
+.toc ul {
+    list-style-type: none;
+    margin-left: 0;
+}
+
+.toc li {
+    margin-bottom: 8px;
+}
+
+.toc a {
+    color: #b3b3b3;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.toc a:hover {
+    color: #ffffff;
+}
+
+/* Стиль для пошаговых инструкций (классический) */
+.step-list {
+    margin-bottom: 30px;
+    counter-reset: step-counter;
+}
+
+.step {
+    display: flex;
+    margin-bottom: 25px;
+    position: relative;
+    padding-left: 40px;
+}
+
+.step:before {
+    counter-increment: step-counter;
+    content: counter(step-counter) ".";
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 18px;
+    font-weight: bold;
+    color: #2196f3;
+    width: 30px;
+    text-align: right;
+}
+
+.step-content {
+    flex-grow: 1;
+}
+
+.step-content p {
+    margin-bottom: 15px;
+}
+
+
+.screenshot {
+    margin: 20px 0;
+    text-align: center;
+    padding: 15px;
+}
+
+.screenshot img {
+    max-width: 100%;
+    border-radius: 3px;
+}
+
+.screenshot-caption {
+    margin-top: 12px;
+    color: #999;
+    font-style: italic;
+    font-size: 14px;
+}
+
+.note {
+    background-color: rgba(33, 150, 243, 0.1);
+    border-left: 4px solid #2196f3;
+    padding: 8px;
+    margin: 15px 0;
+    border-radius: 0 3px 3px 0;
+}
+
+.alert {
+    background-color: rgba(255, 87, 34, 0.1);
+    border-left: 4px solid #ff5722;
+    padding: 8px;
+    margin: 15px 0;
+    border-radius: 0 3px 3px 0;
+    font-weight: bold;
+}
+
+.last-updated {
+    color: #b3b3b3;
+    font-style: italic;
+    margin-bottom: 20px;
+}
+
+/* Адаптивность на мобильных */
+@media (max-width: 767px) {
+    .step {
+        padding-left: 30px;
+    }
+    
+    .step:before {
+        font-size: 16px;
+        width: 25px;
+    }
+    
+    .screenshot {
+        padding: 10px;
+    }
+}

@@ -71,8 +71,15 @@ async def terms_doc():
     return RedirectResponse("/documents/terms.pdf")
 
 @app.get("/privacy.html")
-async def terms_doc():
+async def privacy_doc():
     return RedirectResponse("/documents/privacy.pdf")
+
+@app.get("/manual")
+@app.get("/manual.html")
+async def manual_page():
+    manual_path = os.path.join(STATIC_DIR, "manual.html")
+
+    return FileResponse(manual_path)
 
 @app.get("/auth/yandex/login")
 async def yandex_login(token: str):

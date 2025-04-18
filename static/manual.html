@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Руководство пользователя - tunnel.email</title>
+    <link rel="stylesheet" href="/static/styles.css">
+    <link rel="stylesheet" href="/static/manual-styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>tunnel.email</h1>
+            <nav>
+                <a href="/index.html">Главная</a>
+                <a href="/manual.html" class="active">Руководство</a>
+                <a href="/about.html">О проекте</a>
+            </nav>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container">
+            <div class="toc">
+                <h3>Содержание</h3>
+                <ul>
+                    <li><a href="#getting-started">Начало работы</a></li>
+                    <li><a href="#authorization">Авторизация</a></li>
+                    <li><a href="#using-mail">Использование временной почты</a></li>
+                    <li><a href="#security">Проверка безопасности</a></li>
+                    <li><a href="#zerossl">Использование ZeroSSL</a></li>
+                </ul>
+            </div>
+            
+            <div class="manual-content">
+                <section id="getting-started">
+                    <h2>Начало работы</h2>
+                    
+                    <div class="step-list">
+                        <div class="step">
+                            <div class="step-content">
+                                <p>Скачайте клиентское приложение с главной страницы.
+                                   Доступны версии для Windows, Linux, MacOS.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="step">
+                            <div class="step-content">
+                                <p>Распакуйте zip-архив (ПКМ в проводнике → Извлечь)</p>
+                            </div>
+                        </div>
+                        
+                        <div class="step">
+                            <div class="step-content">
+                                <p>Запустите исполняемый файл</p>
+                            </div>
+                        </div>
+                        
+                        <div class="step">
+                            <div class="step-content">
+                                <p>Нажмите "Начать"</p>
+                                <div class="screenshot">
+                                    <img src="/static/images/start-screen.png" alt="Стартовый экран приложения">
+                                    <div class="screenshot-caption">Стартовый экран приложения</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="authorization">
+                    <h2>Авторизация</h2>
+                    
+                    <div class="step-list">
+                        <div class="step">
+                            <div class="step-content">
+                                <p>После нажатия кнопки "Начать", войдите в аккаунт Яндекс в открывшемся окне в браузере</p>
+                            </div>
+                        </div>
+                        
+                        <div class="step">
+                            <div class="step-content">
+                                <p>Нажмите "Я завершил авторизацию" или "Повторить", если произошла ошибка</p>
+                                <div class="screenshot">
+                                    <img src="/static/images/yandex-auth.png" alt="Окно авторизации Яндекс">
+                                    <div class="screenshot-caption">Окно авторизации</div>
+                                </div>
+                                <div class="note">
+                                    <p>Если вы столкнулись с проблемами входа, убедитесь, что у вас установлен браузер на компьютере</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="using-mail">
+                    <h2>Использование временной почты</h2>
+                    
+                    <div class="step-list">
+                        <div class="step">
+                            <div class="step-content">
+                                <p>После успешной авторизации, вы можете создавать временные почтовые ящики. Для этого нажмите на "Создать новую почту"</p>
+                            </div>
+                        </div>
+                        
+                        <div class="step">
+                            <div class="step-content">
+                                <p>Ожидайте получения TLS-сертификата</p>
+                                <div class="screenshot">
+                                    <img src="/static/images/cert-waiting.png" alt="Ожидание TLS-сертификата">
+                                    <div class="screenshot-caption">Процесс получения TLS-сертификата</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="step">
+                            <div class="step-content">
+                                <p>После того, как показался интерфейс почтового клиента, всё готово для получения электронных писем. На изображении обозначено, для чего нужен каждый элемент интерфейса</p>
+                                <div class="screenshot">
+                                    <img src="/static/images/mail-interface.png" alt="Интерфейс почтового клиента">
+                                    <div class="screenshot-caption">Интерфейс почтового клиента</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="step">
+                            <div class="step-content">
+                                <p>Чтобы получить письмо, просто нажмите на кнопку "Копировать" и используйте ваш адрес при регистрации на любом сервисе.</p>
+                            </div>
+                        </div>
+                        <div class="note">
+                            <p>Для получения сертификатов по умолчанию используется Let's Encrypt, однако есть и <a href="/manual.html#zerossl">возможность</a> использовать ZeroSSL в качестве альтернативы</p>
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="security">
+                    <h2>Проверка безопасности</h2>
+                    
+                    <div class="step-list">
+                        <div class="step">
+                            <div class="step-content">
+                                <p>Чтобы проверить, что на вашу почту только вы имеете сертификат, перейдите в дополнительные функции в почтовом клиенте (доступно по кнопке <b style="font-size: 18px;">⋮</b>) и нажмите "Проверить безопасность".
+                                   Проверка безопасности доступна не сразу, обычно нужно подождать несколько минут после создания почты</p>
+                                <div class="screenshot">
+                                    <img src="/static/images/security-check.png" alt="Проверка безопасности">
+                                    <div class="screenshot-caption">Раздел проверки безопасности</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                <section id="zerossl">
+                    <h2>Использование ZeroSSL</h2>
+                    <p>Вы можете использовать ZeroSSL вместе Let's Encrypt для получения сертификатов.
+                       Это может быть полезно, если Let's Encrypt временно недоступен.
+                    </p>
+                    
+                    <div class="alert">
+                        <p>Обратите внимание, что на данный момент ZeroSSL не работает в России</p>
+                    </div>
+                    
+                    <div class="step-list">
+                        <div class="step">
+                            <div class="step-content">
+                                <p>Выберите ZeroSSL, перед тем как создать почту</p>
+                                <div class="screenshot">
+                                    <img src="/static/images/ca-choice.png" alt="Выбор ZeroSSL">
+                                    <div class="screenshot-caption">Выбор провайдера SSL-сертификатов</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="step">
+                            <div class="step-content">
+                                <p>Нажмите "Открыть сайт ZeroSSL"</p>
+                            </div>
+                        </div>
+                        
+                        <div class="step">
+                            <div class="step-content">
+                                <p>Войдите или создайте аккаунт ZeroSSL, перейдите во вкладку Developer и скопируйте Developer token</p>
+                            </div>
+                        </div>
+                        
+                        <div class="step">
+                            <div class="step-content">
+                                <p>Введите токен и нажмите "Сохранить"</p>
+                                <div class="screenshot">
+                                    <img src="/static/images/zerossl-dev-token.png" alt="Ввод токена ZeroSSL">
+                                    <div class="screenshot-caption">Окно ввода токена ZeroSSL</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>2025 tunnel.email</p>
+            <div class="footer-links">
+                <a href="terms.html">Пользовательское соглашение</a>
+                <a href="privacy.html">Политика конфиденциальности</a>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
