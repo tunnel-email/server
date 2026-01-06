@@ -80,6 +80,15 @@ mailtunnel-api
 sudo certbot --nginx -d <your-domain> -d www.<your-domain>
 ```
 3. Поместите конфигурацию из `nginx-conf/tunnel.email` в `/etc/nginx/sites-available/`
+```bash
+sudo cp ./nginx-conf/tunnel.email /etc/nginx/sites-available/
+```
 4. Замените tunnel.email на ваш домен в конфигурации
 5. Удалите `/etc/nginx/sites-enabled/default`
+```bash
+sudo rm /etc/nginx/sites-enabled/default
+```
 5. Создайте ссылку на конфигурацию в `/etc/nginx/sites-enabled/`
+```bash
+sudo ln -s /etc/nginx/sites-available/tunnel.email /etc/nginx/sites-enabled/
+```
