@@ -1,18 +1,19 @@
 # readme
 
 ## Настройка
-1. Установить пакет
+1. Установить зависимости: `sudo apt install python3-pip mysql-server redis pkg-config default-libmysqlclient-dev wget unzip nginx` 
+2. Установить пакет
 ```bash
-pip install -e .
+pip install . # сначала так
+pip install -e . # потом так
 ```
-2. Установить rathole (убедитесь, что установлены wget и unzip)
+3. Установить rathole
 ```bash
 sudo ./setup_rathole.sh
 ```
-2. Установить базы данных MySQL, Redis
-3. Создать БД mysql через код в `db_create.sql`. Заменить `strong_password` на надёжный пароль 
-4. Получить `client_id`, `client_secret` для Yandex OAuth
-5. Создать `.env` в соответсвии с данным шаблоном:
+4. Создать БД mysql через код в `db_create.sql`. Заменить `strong_password` на надёжный пароль 
+5. Получить `client_id`, `client_secret` для Yandex OAuth
+6. Создать `.env` в соответсвии с данным шаблоном:
 
 ```bash
 DOMAIN= # your domain name
@@ -41,10 +42,6 @@ TUNNEL_SECRET_LENGTH= # on main instance: 25
 TUNNEL_ID_LENGTH= # on main instance: 25
 TUNNEL_TTL= # on main instance: 900 = 15 min
 HTTP01_URL_TTL= # on main instance: 90 = 1.5 min
-```
-6. Выдайте Python права на работу с root-портов без root:
-```bash
-sudo setcap 'cap_net_bind_service=+ep' $(readlink -f $(which python3))
 ```
 7. Убедитесь, что присутствует A запись в DNS на поддомен * 
 
