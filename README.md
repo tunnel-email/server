@@ -43,7 +43,8 @@ TUNNEL_ID_LENGTH= # on main instance: 25
 TUNNEL_TTL= # on main instance: 900 = 15 min
 HTTP01_URL_TTL= # on main instance: 90 = 1.5 min
 ```
-7. Убедитесь, что присутствует A запись в DNS на поддомен * 
+7. Выдать права python на работу с root портами (нужно для mailtunnel-forwarder): `sudo setcap 'cap_net_bind_service=+ep' $(readlink -f $(which python3))`
+7. Убедиться, что присутствует A запись в DNS на поддомен * 
 
 ## Запуск
 Сервер состоит из 4 основных компонентов:
